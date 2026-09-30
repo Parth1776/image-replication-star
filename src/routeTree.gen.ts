@@ -19,6 +19,8 @@ import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppChatRouteImport } from './routes/_authenticated/app.chat'
 import { Route as AuthenticatedAppInsightsRouteImport } from './routes/_authenticated/app.insights'
 import { Route as AuthenticatedAppMemoryRouteImport } from './routes/_authenticated/app.memory'
+import { Route as AuthenticatedAppSafetyRouteImport } from './routes/_authenticated/app.safety'
+import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
 import { Route as AuthenticatedAppTimelineRouteImport } from './routes/_authenticated/app.timeline'
 import { Route as AuthenticatedAppChatIndexRouteImport } from './routes/_authenticated/app.chat.index'
 import { Route as AuthenticatedAppChatConversationIdRouteImport } from './routes/_authenticated/app.chat.$conversationId'
@@ -73,6 +75,17 @@ const AuthenticatedAppMemoryRoute = AuthenticatedAppMemoryRouteImport.update({
   path: '/memory',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppSafetyRoute = AuthenticatedAppSafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppSettingsRoute =
+  AuthenticatedAppSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppTimelineRoute =
   AuthenticatedAppTimelineRouteImport.update({
     id: '/timeline',
@@ -101,6 +114,8 @@ export interface FileRoutesByFullPath {
   '/app/chat': typeof AuthenticatedAppChatRouteWithChildren
   '/app/insights': typeof AuthenticatedAppInsightsRoute
   '/app/memory': typeof AuthenticatedAppMemoryRoute
+  '/app/safety': typeof AuthenticatedAppSafetyRoute
+  '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/timeline': typeof AuthenticatedAppTimelineRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/chat/$conversationId': typeof AuthenticatedAppChatConversationIdRoute
@@ -113,6 +128,8 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/app/insights': typeof AuthenticatedAppInsightsRoute
   '/app/memory': typeof AuthenticatedAppMemoryRoute
+  '/app/safety': typeof AuthenticatedAppSafetyRoute
+  '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/timeline': typeof AuthenticatedAppTimelineRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/chat/$conversationId': typeof AuthenticatedAppChatConversationIdRoute
@@ -129,6 +146,8 @@ export interface FileRoutesById {
   '/_authenticated/app/chat': typeof AuthenticatedAppChatRouteWithChildren
   '/_authenticated/app/insights': typeof AuthenticatedAppInsightsRoute
   '/_authenticated/app/memory': typeof AuthenticatedAppMemoryRoute
+  '/_authenticated/app/safety': typeof AuthenticatedAppSafetyRoute
+  '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/_authenticated/app/timeline': typeof AuthenticatedAppTimelineRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/chat/$conversationId': typeof AuthenticatedAppChatConversationIdRoute
@@ -145,6 +164,8 @@ export interface FileRouteTypes {
     | '/app/chat'
     | '/app/insights'
     | '/app/memory'
+    | '/app/safety'
+    | '/app/settings'
     | '/app/timeline'
     | '/app/'
     | '/app/chat/$conversationId'
@@ -157,6 +178,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/app/insights'
     | '/app/memory'
+    | '/app/safety'
+    | '/app/settings'
     | '/app/timeline'
     | '/app'
     | '/app/chat/$conversationId'
@@ -172,6 +195,8 @@ export interface FileRouteTypes {
     | '/_authenticated/app/chat'
     | '/_authenticated/app/insights'
     | '/_authenticated/app/memory'
+    | '/_authenticated/app/safety'
+    | '/_authenticated/app/settings'
     | '/_authenticated/app/timeline'
     | '/_authenticated/app/'
     | '/_authenticated/app/chat/$conversationId'
@@ -258,6 +283,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppMemoryRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/safety': {
+      id: '/_authenticated/app/safety'
+      path: '/safety'
+      fullPath: '/app/safety'
+      preLoaderRoute: typeof AuthenticatedAppSafetyRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/settings': {
+      id: '/_authenticated/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/timeline': {
       id: '/_authenticated/app/timeline'
       path: '/timeline'
@@ -300,6 +339,8 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppChatRoute: typeof AuthenticatedAppChatRouteWithChildren
   AuthenticatedAppInsightsRoute: typeof AuthenticatedAppInsightsRoute
   AuthenticatedAppMemoryRoute: typeof AuthenticatedAppMemoryRoute
+  AuthenticatedAppSafetyRoute: typeof AuthenticatedAppSafetyRoute
+  AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppTimelineRoute: typeof AuthenticatedAppTimelineRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
 }
@@ -308,6 +349,8 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppChatRoute: AuthenticatedAppChatRouteWithChildren,
   AuthenticatedAppInsightsRoute: AuthenticatedAppInsightsRoute,
   AuthenticatedAppMemoryRoute: AuthenticatedAppMemoryRoute,
+  AuthenticatedAppSafetyRoute: AuthenticatedAppSafetyRoute,
+  AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppTimelineRoute: AuthenticatedAppTimelineRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
 }
