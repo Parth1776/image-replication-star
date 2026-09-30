@@ -17,6 +17,9 @@ import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/ap
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppChatRouteImport } from './routes/_authenticated/app.chat'
+import { Route as AuthenticatedAppInsightsRouteImport } from './routes/_authenticated/app.insights'
+import { Route as AuthenticatedAppMemoryRouteImport } from './routes/_authenticated/app.memory'
+import { Route as AuthenticatedAppTimelineRouteImport } from './routes/_authenticated/app.timeline'
 import { Route as AuthenticatedAppChatIndexRouteImport } from './routes/_authenticated/app.chat.index'
 import { Route as AuthenticatedAppChatConversationIdRouteImport } from './routes/_authenticated/app.chat.$conversationId'
 
@@ -59,6 +62,23 @@ const AuthenticatedAppChatRoute = AuthenticatedAppChatRouteImport.update({
   path: '/chat',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppInsightsRoute =
+  AuthenticatedAppInsightsRouteImport.update({
+    id: '/insights',
+    path: '/insights',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppMemoryRoute = AuthenticatedAppMemoryRouteImport.update({
+  id: '/memory',
+  path: '/memory',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppTimelineRoute =
+  AuthenticatedAppTimelineRouteImport.update({
+    id: '/timeline',
+    path: '/timeline',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppChatIndexRoute =
   AuthenticatedAppChatIndexRouteImport.update({
     id: '/',
@@ -79,6 +99,9 @@ export interface FileRoutesByFullPath {
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/app/chat': typeof AuthenticatedAppChatRouteWithChildren
+  '/app/insights': typeof AuthenticatedAppInsightsRoute
+  '/app/memory': typeof AuthenticatedAppMemoryRoute
+  '/app/timeline': typeof AuthenticatedAppTimelineRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/chat/$conversationId': typeof AuthenticatedAppChatConversationIdRoute
   '/app/chat/': typeof AuthenticatedAppChatIndexRoute
@@ -88,6 +111,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/how-it-works': typeof HowItWorksRoute
   '/api/chat': typeof ApiChatRoute
+  '/app/insights': typeof AuthenticatedAppInsightsRoute
+  '/app/memory': typeof AuthenticatedAppMemoryRoute
+  '/app/timeline': typeof AuthenticatedAppTimelineRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/chat/$conversationId': typeof AuthenticatedAppChatConversationIdRoute
   '/app/chat': typeof AuthenticatedAppChatIndexRoute
@@ -101,6 +127,9 @@ export interface FileRoutesById {
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/app/chat': typeof AuthenticatedAppChatRouteWithChildren
+  '/_authenticated/app/insights': typeof AuthenticatedAppInsightsRoute
+  '/_authenticated/app/memory': typeof AuthenticatedAppMemoryRoute
+  '/_authenticated/app/timeline': typeof AuthenticatedAppTimelineRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/chat/$conversationId': typeof AuthenticatedAppChatConversationIdRoute
   '/_authenticated/app/chat/': typeof AuthenticatedAppChatIndexRoute
@@ -114,6 +143,9 @@ export interface FileRouteTypes {
     | '/app'
     | '/api/chat'
     | '/app/chat'
+    | '/app/insights'
+    | '/app/memory'
+    | '/app/timeline'
     | '/app/'
     | '/app/chat/$conversationId'
     | '/app/chat/'
@@ -123,6 +155,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/how-it-works'
     | '/api/chat'
+    | '/app/insights'
+    | '/app/memory'
+    | '/app/timeline'
     | '/app'
     | '/app/chat/$conversationId'
     | '/app/chat'
@@ -135,6 +170,9 @@ export interface FileRouteTypes {
     | '/_authenticated/app'
     | '/api/chat'
     | '/_authenticated/app/chat'
+    | '/_authenticated/app/insights'
+    | '/_authenticated/app/memory'
+    | '/_authenticated/app/timeline'
     | '/_authenticated/app/'
     | '/_authenticated/app/chat/$conversationId'
     | '/_authenticated/app/chat/'
@@ -206,6 +244,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppChatRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/insights': {
+      id: '/_authenticated/app/insights'
+      path: '/insights'
+      fullPath: '/app/insights'
+      preLoaderRoute: typeof AuthenticatedAppInsightsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/memory': {
+      id: '/_authenticated/app/memory'
+      path: '/memory'
+      fullPath: '/app/memory'
+      preLoaderRoute: typeof AuthenticatedAppMemoryRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/timeline': {
+      id: '/_authenticated/app/timeline'
+      path: '/timeline'
+      fullPath: '/app/timeline'
+      preLoaderRoute: typeof AuthenticatedAppTimelineRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/chat/': {
       id: '/_authenticated/app/chat/'
       path: '/'
@@ -239,11 +298,17 @@ const AuthenticatedAppChatRouteWithChildren =
 
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppChatRoute: typeof AuthenticatedAppChatRouteWithChildren
+  AuthenticatedAppInsightsRoute: typeof AuthenticatedAppInsightsRoute
+  AuthenticatedAppMemoryRoute: typeof AuthenticatedAppMemoryRoute
+  AuthenticatedAppTimelineRoute: typeof AuthenticatedAppTimelineRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppChatRoute: AuthenticatedAppChatRouteWithChildren,
+  AuthenticatedAppInsightsRoute: AuthenticatedAppInsightsRoute,
+  AuthenticatedAppMemoryRoute: AuthenticatedAppMemoryRoute,
+  AuthenticatedAppTimelineRoute: AuthenticatedAppTimelineRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
 }
 
