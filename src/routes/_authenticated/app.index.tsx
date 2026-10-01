@@ -52,13 +52,13 @@ function Overview() {
     },
   });
 
-  const name = summary.data?.profile?.display_name;
+  const { firstName: name } = useDisplayName();
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <PageIntro
         eyebrow="Overview"
-        title={name ? `Hello, ${name}` : "Hello"}
+        title={name ? `Welcome back, ${name}` : "Welcome back"}
         description="Everything here is generated from your own conversations and stays under your control."
         action={
           <Button asChild>
