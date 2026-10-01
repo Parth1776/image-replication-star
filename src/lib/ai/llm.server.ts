@@ -22,7 +22,7 @@ export function createLLMService(runId?: string): LLMService {
       const gateway = createLovableAiGatewayRunIdFetch(runId);
       const response = await gateway.fetch(GATEWAY_URL, {
         method: "POST",
-        signal,
+        signal: signal ?? null,
         headers: {
           "Content-Type": "application/json",
           "Lovable-API-Key": apiKey,
