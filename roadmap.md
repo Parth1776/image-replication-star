@@ -13,4 +13,4 @@
 - [x] Settings
 - [x] Mock ML service layer + LLMService via gateway
 - [ ] Demo data clearly labelled (seed per-account sample, never mixed with real data)
-- [ ] README
+- [x] README
