@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { ArrowRight, Clock3, Compass, ShieldCheck, Waves } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
@@ -51,6 +53,12 @@ const pillars = [
 ];
 
 function Landing() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!loading && user) navigate({ to: "/app", replace: true });
+  }, [loading, user, navigate]);
+  if (user) return null;
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
