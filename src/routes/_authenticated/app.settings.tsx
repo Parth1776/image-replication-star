@@ -78,7 +78,7 @@ function SettingsPage() {
   }, [profile.data]);
 
   const save = useMutation({
-    mutationFn: async (patch: Record<string, unknown>) => {
+    mutationFn: async (patch: ProfilePatch) => {
       if (!user) throw new Error("Please sign in again.");
       const { error } = await supabase.from("profiles").update(patch).eq("id", user.id);
       if (error) throw error;
@@ -92,7 +92,7 @@ function SettingsPage() {
           consentKeys.map((key) => ({
             user_id: user.id,
             consent_type: key,
-            granted: Boolean(patch[key]),
+            granted: Boolean(patch[key as keyof ProfilePatch]),
           })),
         );
       }
@@ -230,7 +230,7 @@ function SettingsPage() {
             <Switch
               checked={privacy[item.key]}
               aria-label={item.label}
-              onCheckedChange={(checked) => {
+              onCheckedChange={(checked: boolean) => {
                 setPrivacy((state) => ({ ...state, [item.key]: checked }));
                 save.mutate({ [item.key]: checked });
               }}
@@ -334,3 +334,12 @@ function SettingsPage() {
     </div>
   );
 }
+
+type ProfilePatch = {
+  display_name?: string | null;
+  communication_style?: string;
+  store_conversations?: boolean;
+  memory_enabled?: boolean;
+  analytics_enabled?: boolean;
+  model_improvement_enabled?: boolean;
+};

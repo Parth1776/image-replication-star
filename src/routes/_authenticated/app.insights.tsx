@@ -48,7 +48,7 @@ function InsightsPage() {
     mutationFn: async (input: {
       id: string;
       confirmation: "accurate" | "not_accurate";
-      correction?: string;
+      correction?: string | undefined;
     }) => {
       const { error } = await supabase
         .from("insights")
