@@ -177,13 +177,13 @@ export const mockMemoryService: MemoryService = {
     if (interview)
       candidates.push({
         category: "important_event",
-        content: `User mentioned an upcoming ${interview[1].toLowerCase()}.`,
+        content: `User mentioned an upcoming ${(interview[1] ?? "").toLowerCase()}.`,
       });
     const project = text.match(/\bworking on ([^.!?]{3,60})/i);
     if (project)
       candidates.push({
         category: "personal_context",
-        content: `User is working on ${project[1].trim()}.`,
+        content: `User is working on ${(project[1] ?? "").trim()}.`,
       });
     return { candidates, ...PROVENANCE };
   },

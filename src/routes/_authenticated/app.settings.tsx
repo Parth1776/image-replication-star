@@ -230,7 +230,7 @@ function SettingsPage() {
             <Switch
               checked={privacy[item.key]}
               aria-label={item.label}
-              onCheckedChange={(checked) => {
+              onCheckedChange={(checked: boolean) => {
                 setPrivacy((state) => ({ ...state, [item.key]: checked }));
                 save.mutate({ [item.key]: checked });
               }}
