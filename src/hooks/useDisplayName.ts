@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 export function firstName(full?: string | null): string | null {
   const trimmed = full?.trim();
   if (!trimmed) return null;
-  return trimmed.split(/\s+/)[0];
+  return trimmed.split(/\s+/)[0] ?? null;
 }
 
 export function useDisplayName() {
@@ -21,7 +21,7 @@ export function useDisplayName() {
   });
   const meta = user?.user_metadata as Record<string, string | undefined> | undefined;
   const full =
-    profile.data ?? meta?.display_name ?? meta?.full_name ?? meta?.name ?? null;
+    profile.data ?? meta?.["display_name"] ?? meta?.["full_name"] ?? meta?.["name"] ?? null;
   const first = firstName(full) ?? user?.email?.split("@")[0] ?? null;
   return { user, firstName: first, initial: (first ?? "?").charAt(0).toUpperCase() };
 }

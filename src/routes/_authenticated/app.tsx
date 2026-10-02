@@ -73,7 +73,7 @@ function groupConversations(list: Conv[]) {
             : t >= startOfToday.getTime() - 30 * day
               ? "Previous 30 days"
               : "Older";
-    groups[key].push(c);
+    groups[key]!.push(c);
   }
   return Object.entries(groups).filter(([, items]) => items.length > 0);
 }
