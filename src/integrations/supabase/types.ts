@@ -331,6 +331,8 @@ export type Database = {
           display_name: string | null
           email: string | null
           id: string
+          interaction_notes: string | null
+          interaction_priorities: string[]
           memory_enabled: boolean
           model_improvement_enabled: boolean
           store_conversations: boolean
@@ -343,6 +345,8 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id: string
+          interaction_notes?: string | null
+          interaction_priorities?: string[]
           memory_enabled?: boolean
           model_improvement_enabled?: boolean
           store_conversations?: boolean
@@ -355,6 +359,8 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          interaction_notes?: string | null
+          interaction_priorities?: string[]
           memory_enabled?: boolean
           model_improvement_enabled?: boolean
           store_conversations?: boolean
