@@ -127,7 +127,7 @@ export function ChatWindow({ conversationId, userId }: { conversationId: string;
   );
 
   return (
-    <div className="flex h-[calc(100vh-9rem)] min-h-[32rem] flex-col">
+    <div className="flex h-[calc(100vh-8.5rem)] min-h-[28rem] flex-col">
       {safetyMode && (
         <div className="mb-4 rounded-xl border border-border bg-surface p-4">
           <div className="flex items-start gap-3">
