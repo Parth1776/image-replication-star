@@ -1,19 +1,18 @@
 import { createFileRoute, Link, Outlet, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useEffect } from "react";
 import {
-  Activity,
-  BookMarked,
   Brain,
   LifeBuoy,
   LogOut,
   Menu,
-  MessageCircle,
+  PanelLeftClose,
+  PanelLeftOpen,
   Plus,
   Search,
   Settings,
   SlidersHorizontal,
-  Sparkle,
   UserRound,
   HelpCircle,
 } from "lucide-react";
@@ -37,16 +36,6 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/app")({
   component: AppShell,
 });
-
-const NAV = [
-  { to: "/app", label: "Overview", icon: Sparkle, exact: true },
-  { to: "/app/chat", label: "Conversation", icon: MessageCircle },
-  { to: "/app/timeline", label: "Timeline", icon: Activity },
-  { to: "/app/insights", label: "Insights", icon: BookMarked },
-  { to: "/app/memory", label: "Memory", icon: Brain },
-  { to: "/app/safety", label: "Safety Centre", icon: LifeBuoy },
-  { to: "/app/settings", label: "Settings", icon: Settings },
-] as const;
 
 type Conv = { id: string; title: string; updated_at: string };
 
@@ -78,12 +67,45 @@ function groupConversations(list: Conv[]) {
   return Object.entries(groups).filter(([, items]) => items.length > 0);
 }
 
-function SidebarBody({ onNavigate, onSignOut }: { onNavigate: () => void; onSignOut: () => void }) {
+function useAvatarUrl() {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      const meta = data.user?.user_metadata as { avatar_url?: string; picture?: string } | undefined;
+      setUrl(meta?.avatar_url ?? meta?.picture ?? null);
+    });
+  }, []);
+  return url;
+}
+
+function Avatar({ initial, url }: { initial: string; url: string | null }) {
+  return url ? (
+    <img src={url} alt="" referrerPolicy="no-referrer" className="size-8 shrink-0 rounded-full object-cover" />
+  ) : (
+    <span className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
+      {initial}
+    </span>
+  );
+}
+
+function SidebarBody({
+  onNavigate,
+  onSignOut,
+  collapsed = false,
+  onToggleCollapse,
+}: {
+  onNavigate: () => void;
+  onSignOut: () => void;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+}) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const params = useParams({ strict: false }) as { conversationId?: string };
   const { firstName, initial } = useDisplayName();
+  const avatarUrl = useAvatarUrl();
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const conversations = useQuery({
     queryKey: ["conversations"],
@@ -127,31 +149,53 @@ function SidebarBody({ onNavigate, onSignOut }: { onNavigate: () => void; onSign
 
   return (
     <div className="flex h-full flex-col">
-      <div className="px-4 pt-5">
-        <Link to="/app" onClick={onNavigate} className="block px-2">
-          <Wordmark />
-        </Link>
+      <div className={cn("flex items-center pt-4", collapsed ? "flex-col gap-3 px-2" : "justify-between px-4")}>
+        {!collapsed && (
+          <Link to="/app" onClick={onNavigate} className="block px-2">
+            <Wordmark />
+          </Link>
+        )}
+        {onToggleCollapse && (
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="grid size-8 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
+          >
+            {collapsed ? <PanelLeftOpen className="size-4" strokeWidth={1.6} /> : <PanelLeftClose className="size-4" strokeWidth={1.6} />}
+          </button>
+        )}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-4 pt-6">
-        <nav className="flex flex-col gap-0.5">
-          {NAV.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              activeOptions={{ exact: "exact" in item ? item.exact : false }}
-              onClick={onNavigate}
-              className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
-              activeProps={{ className: "bg-sidebar-accent text-foreground" }}
-            >
-              <item.icon className="size-4" strokeWidth={1.6} />
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="mt-7 space-y-2">
-          <p className="eyebrow px-3">Conversations</p>
+      {collapsed ? (
+        <div className="flex flex-1 flex-col items-center gap-2 px-2 pt-4">
+          <button
+            type="button"
+            onClick={() => create.mutate()}
+            disabled={create.isPending}
+            aria-label="New conversation"
+            title="New conversation"
+            className="grid size-9 place-items-center rounded-lg text-foreground transition-colors hover:bg-sidebar-accent"
+          >
+            <Plus className="size-4" strokeWidth={1.7} />
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setSearchOpen(true);
+              onToggleCollapse?.();
+            }}
+            aria-label="Search conversations"
+            title="Search conversations"
+            className="grid size-9 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
+          >
+            <Search className="size-4" strokeWidth={1.7} />
+          </button>
+        </div>
+      ) : (
+      <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-4 pt-4">
+        <div className="space-y-2">
           <button
             type="button"
             onClick={() => create.mutate()}
@@ -166,6 +210,7 @@ function SidebarBody({ onNavigate, onSignOut }: { onNavigate: () => void; onSign
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              autoFocus={searchOpen}
               placeholder="Search conversations"
               aria-label="Search conversations"
               className="h-8 bg-transparent pl-8 text-sm"
@@ -203,18 +248,21 @@ function SidebarBody({ onNavigate, onSignOut }: { onNavigate: () => void; onSign
           </div>
         </div>
       </div>
+      )}
 
-      <div className="border-t border-sidebar-border p-3">
+      <div className={cn("border-t border-sidebar-border", collapsed ? "p-2" : "p-3")}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-sidebar-accent"
+              aria-label="Account menu"
+              className={cn(
+                "flex w-full items-center gap-3 rounded-lg py-2 text-left transition-colors hover:bg-sidebar-accent",
+                collapsed ? "justify-center px-0" : "px-2",
+              )}
             >
-              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
-                {initial}
-              </span>
-              <span className="min-w-0">
+              <Avatar initial={initial} url={avatarUrl} />
+              <span className={cn("min-w-0", collapsed && "sr-only")}>
                 <span className="block truncate text-sm font-medium text-foreground">
                   {firstName ?? "Account"}
                 </span>
@@ -224,9 +272,7 @@ function SidebarBody({ onNavigate, onSignOut }: { onNavigate: () => void; onSign
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="start" className="w-60">
             <div className="flex items-center gap-3 px-2 py-2">
-              <span className="grid size-8 place-items-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
-                {initial}
-              </span>
+              <Avatar initial={initial} url={avatarUrl} />
               <span>
                 <span className="block text-sm font-medium">{firstName ?? "Account"}</span>
                 <span className="block text-[11px] text-muted-foreground">Account</span>
@@ -237,7 +283,7 @@ function SidebarBody({ onNavigate, onSignOut }: { onNavigate: () => void; onSign
               <Link to="/app/settings" onClick={onNavigate}><UserRound className="size-4" />Profile</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className={menuItem}>
-              <Link to="/app/settings" onClick={onNavigate}><SlidersHorizontal className="size-4" />Personalization</Link>
+              <Link to="/app/personalization" onClick={onNavigate}><SlidersHorizontal className="size-4" />Personalization</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className={menuItem}>
               <Link to="/app/memory" onClick={onNavigate}><Brain className="size-4" />Memory</Link>
@@ -264,6 +310,16 @@ function SidebarBody({ onNavigate, onSignOut }: { onNavigate: () => void; onSign
 
 function AppShell() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  useEffect(() => {
+    setCollapsed(localStorage.getItem("emotionala-sidebar") === "collapsed");
+  }, []);
+  function toggleCollapse() {
+    setCollapsed((current) => {
+      localStorage.setItem("emotionala-sidebar", current ? "expanded" : "collapsed");
+      return !current;
+    });
+  }
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -277,8 +333,18 @@ function AppShell() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <aside className="hidden h-screen w-64 shrink-0 border-r border-sidebar-border bg-sidebar lg:block">
-        <SidebarBody onNavigate={() => {}} onSignOut={handleSignOut} />
+      <aside
+        className={cn(
+          "hidden h-screen shrink-0 border-r border-sidebar-border bg-sidebar transition-[width] duration-200 lg:block",
+          collapsed ? "w-14" : "w-64",
+        )}
+      >
+        <SidebarBody
+          onNavigate={() => {}}
+          onSignOut={handleSignOut}
+          collapsed={collapsed}
+          onToggleCollapse={toggleCollapse}
+        />
       </aside>
 
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
