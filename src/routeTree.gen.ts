@@ -19,6 +19,7 @@ import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppChatRouteImport } from './routes/_authenticated/app.chat'
 import { Route as AuthenticatedAppInsightsRouteImport } from './routes/_authenticated/app.insights'
 import { Route as AuthenticatedAppMemoryRouteImport } from './routes/_authenticated/app.memory'
+import { Route as AuthenticatedAppPersonalizationRouteImport } from './routes/_authenticated/app.personalization'
 import { Route as AuthenticatedAppSafetyRouteImport } from './routes/_authenticated/app.safety'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
 import { Route as AuthenticatedAppTimelineRouteImport } from './routes/_authenticated/app.timeline'
@@ -75,6 +76,12 @@ const AuthenticatedAppMemoryRoute = AuthenticatedAppMemoryRouteImport.update({
   path: '/memory',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppPersonalizationRoute =
+  AuthenticatedAppPersonalizationRouteImport.update({
+    id: '/personalization',
+    path: '/personalization',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppSafetyRoute = AuthenticatedAppSafetyRouteImport.update({
   id: '/safety',
   path: '/safety',
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/app/chat': typeof AuthenticatedAppChatRouteWithChildren
   '/app/insights': typeof AuthenticatedAppInsightsRoute
   '/app/memory': typeof AuthenticatedAppMemoryRoute
+  '/app/personalization': typeof AuthenticatedAppPersonalizationRoute
   '/app/safety': typeof AuthenticatedAppSafetyRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/timeline': typeof AuthenticatedAppTimelineRoute
@@ -128,6 +136,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/app/insights': typeof AuthenticatedAppInsightsRoute
   '/app/memory': typeof AuthenticatedAppMemoryRoute
+  '/app/personalization': typeof AuthenticatedAppPersonalizationRoute
   '/app/safety': typeof AuthenticatedAppSafetyRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/timeline': typeof AuthenticatedAppTimelineRoute
@@ -146,6 +155,7 @@ export interface FileRoutesById {
   '/_authenticated/app/chat': typeof AuthenticatedAppChatRouteWithChildren
   '/_authenticated/app/insights': typeof AuthenticatedAppInsightsRoute
   '/_authenticated/app/memory': typeof AuthenticatedAppMemoryRoute
+  '/_authenticated/app/personalization': typeof AuthenticatedAppPersonalizationRoute
   '/_authenticated/app/safety': typeof AuthenticatedAppSafetyRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/_authenticated/app/timeline': typeof AuthenticatedAppTimelineRoute
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/app/chat'
     | '/app/insights'
     | '/app/memory'
+    | '/app/personalization'
     | '/app/safety'
     | '/app/settings'
     | '/app/timeline'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/app/insights'
     | '/app/memory'
+    | '/app/personalization'
     | '/app/safety'
     | '/app/settings'
     | '/app/timeline'
@@ -195,6 +207,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/chat'
     | '/_authenticated/app/insights'
     | '/_authenticated/app/memory'
+    | '/_authenticated/app/personalization'
     | '/_authenticated/app/safety'
     | '/_authenticated/app/settings'
     | '/_authenticated/app/timeline'
@@ -283,6 +296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppMemoryRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/personalization': {
+      id: '/_authenticated/app/personalization'
+      path: '/personalization'
+      fullPath: '/app/personalization'
+      preLoaderRoute: typeof AuthenticatedAppPersonalizationRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/safety': {
       id: '/_authenticated/app/safety'
       path: '/safety'
@@ -339,6 +359,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppChatRoute: typeof AuthenticatedAppChatRouteWithChildren
   AuthenticatedAppInsightsRoute: typeof AuthenticatedAppInsightsRoute
   AuthenticatedAppMemoryRoute: typeof AuthenticatedAppMemoryRoute
+  AuthenticatedAppPersonalizationRoute: typeof AuthenticatedAppPersonalizationRoute
   AuthenticatedAppSafetyRoute: typeof AuthenticatedAppSafetyRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppTimelineRoute: typeof AuthenticatedAppTimelineRoute
@@ -349,6 +370,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppChatRoute: AuthenticatedAppChatRouteWithChildren,
   AuthenticatedAppInsightsRoute: AuthenticatedAppInsightsRoute,
   AuthenticatedAppMemoryRoute: AuthenticatedAppMemoryRoute,
+  AuthenticatedAppPersonalizationRoute: AuthenticatedAppPersonalizationRoute,
   AuthenticatedAppSafetyRoute: AuthenticatedAppSafetyRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppTimelineRoute: AuthenticatedAppTimelineRoute,

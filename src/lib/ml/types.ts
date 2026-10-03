@@ -64,7 +64,13 @@ export interface TrajectorySummary {
 }
 
 export interface MemoryCandidate {
-  category: "important_event" | "conversation_preference" | "personal_context" | "emotional_pattern";
+  category:
+    | "important_event"
+    | "conversation_preference"
+    | "personal_context"
+    | "emotional_pattern"
+    | "goal"
+    | "ongoing_project";
   content: string;
 }
 
@@ -102,7 +108,11 @@ export interface InteractionPolicyService {
 }
 
 export interface MemoryService {
-  propose(input: { text: string }): Promise<{ candidates: MemoryCandidate[] } & ServiceProvenance>;
+  propose(input: {
+    text: string;
+    assistantReply?: string;
+    existing?: { category: string; content: string }[];
+  }): Promise<{ candidates: MemoryCandidate[] } & ServiceProvenance>;
 }
 
 export interface LLMService {
