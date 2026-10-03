@@ -23,6 +23,7 @@ const STYLE_INSTRUCTIONS: Record<string, string> = {
   gentle: "Be gentle and unhurried. Avoid pressure.",
   practical: "Be pragmatic and specific.",
   conversational: "Be warm and conversational, like a thoughtful person, not a report.",
+  balanced: "Balance warmth and directness; adapt to what the moment needs.",
 };
 
 export function buildSystemPrompt(input: {
@@ -34,7 +35,21 @@ export function buildSystemPrompt(input: {
   risk: RiskEstimate;
   policy: InteractionPolicyDecision;
   memoryEnabled: boolean;
+  priorities?: string[];
+  interactionNotes?: string | null;
 }) {
+  const PRIORITY_TEXT: Record<string, string> = {
+    listen_first: "Listen and acknowledge before offering any advice.",
+    practical_solutions: "When appropriate, offer practical solutions.",
+    ask_questions: "Ask questions to understand them better.",
+    concise: "Keep responses concise.",
+    detailed: "Explain things in more detail when useful.",
+  };
+  const priorityBlock = (input.priorities ?? [])
+    .map((p) => PRIORITY_TEXT[p])
+    .filter(Boolean)
+    .map((t) => `- ${t}`)
+    .join("\n");
   const memoryBlock =
     input.memoryEnabled && input.memories.length
       ? input.memories.map((memory) => `- (${memory.category}) ${memory.content}`).join("\n")
@@ -56,6 +71,10 @@ export function buildSystemPrompt(input: {
       STYLE_INSTRUCTIONS[input.communicationStyle] ?? STYLE_INSTRUCTIONS["conversational"]
     }`,
     input.displayName ? `They are addressed as ${input.displayName}.` : "",
+    priorityBlock ? `Their stated priorities (user-set personalization):\n${priorityBlock}` : "",
+    input.interactionNotes?.trim()
+      ? `In their own words, how they want you to interact (follow unless it conflicts with the hard rules): """${input.interactionNotes.trim().slice(0, 1000)}"""`
+      : "",
     "",
     "Context you may use, if relevant (user-controlled memory):",
     memoryBlock,

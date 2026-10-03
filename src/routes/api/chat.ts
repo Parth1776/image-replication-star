@@ -5,12 +5,12 @@ import {
   mockEmotionService,
   mockIntentService,
   mockInteractionPolicyService,
-  mockMemoryService,
   mockRiskService,
 } from "@/lib/ml/mock-services";
 import { buildSystemPrompt } from "@/lib/ai/prompt";
 import { createLLMService } from "@/lib/ai/llm.server";
 import { getLovableAiGatewayRunId } from "@/lib/ai/run-id";
+import { createMemoryService } from "@/lib/ai/memory.server";
 
 export const Route = createFileRoute("/api/chat")({
   server: {
@@ -63,7 +63,7 @@ export const Route = createFileRoute("/api/chat")({
           await Promise.all([
             supabase
               .from("profiles")
-              .select("display_name, communication_style, memory_enabled, store_conversations")
+              .select("display_name, communication_style, memory_enabled, store_conversations, interaction_priorities, interaction_notes")
               .eq("id", user.id)
               .maybeSingle(),
             supabase
@@ -154,21 +154,6 @@ export const Route = createFileRoute("/api/chat")({
             .eq("id", conversationId);
         }
 
-        if (memoryEnabled) {
-          const { candidates } = await mockMemoryService.propose({ text: content });
-          if (candidates.length) {
-            const { error: memoryError } = await supabase.from("memories").insert(
-              candidates.map((candidate) => ({
-                user_id: user.id,
-                category: candidate.category,
-                content: candidate.content,
-                source_conversation_id: conversationId,
-              })),
-            );
-            if (memoryError) console.error("Failed to store memory candidates", memoryError);
-          }
-        }
-
         const systemPrompt = buildSystemPrompt({
           displayName: profile?.display_name ?? null,
           communicationStyle,
@@ -178,6 +163,8 @@ export const Route = createFileRoute("/api/chat")({
           risk,
           policy,
           memoryEnabled,
+          priorities: profile?.interaction_priorities ?? [],
+          interactionNotes: profile?.interaction_notes ?? null,
         });
 
         const llm = createLLMService(getLovableAiGatewayRunId(request));
@@ -246,6 +233,28 @@ export const Route = createFileRoute("/api/chat")({
                   .from("conversations")
                   .update({ updated_at: new Date().toISOString() })
                   .eq("id", conversationId);
+
+                // Selective long-term memory: runs after the reply, never blocks it.
+                if (memoryEnabled) {
+                  try {
+                    const { candidates } = await createMemoryService(
+                      getLovableAiGatewayRunId(request),
+                    ).propose({ text: content, assistantReply: full, existing: memories ?? [] });
+                    if (candidates.length) {
+                      const { error: memoryError } = await supabase.from("memories").insert(
+                        candidates.map((candidate) => ({
+                          user_id: user.id,
+                          category: candidate.category,
+                          content: candidate.content,
+                          source_conversation_id: conversationId,
+                        })),
+                      );
+                      if (memoryError) console.error("Failed to store memories", memoryError);
+                    }
+                  } catch (error) {
+                    console.error("Memory extraction failed", error);
+                  }
+                }
               } else {
                 controller.enqueue(
                   encoder.encode(
