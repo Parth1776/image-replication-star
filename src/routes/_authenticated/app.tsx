@@ -1,7 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Brain,
   LifeBuoy,
@@ -47,7 +46,6 @@ function groupConversations(list: Conv[]) {
     Today: [],
     Yesterday: [],
     "Previous 7 days": [],
-    "Previous 30 days": [],
     Older: [],
   };
   for (const c of list) {
@@ -59,9 +57,7 @@ function groupConversations(list: Conv[]) {
           ? "Yesterday"
           : t >= startOfToday.getTime() - 7 * day
             ? "Previous 7 days"
-            : t >= startOfToday.getTime() - 30 * day
-              ? "Previous 30 days"
-              : "Older";
+            : "Older";
     groups[key]!.push(c);
   }
   return Object.entries(groups).filter(([, items]) => items.length > 0);
