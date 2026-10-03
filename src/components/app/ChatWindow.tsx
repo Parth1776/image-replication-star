@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowUp, LifeBuoy, Mic, Paperclip } from "lucide-react";
+import { ArrowUp, LifeBuoy } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -113,6 +113,22 @@ export function ChatWindow({ conversationId, userId }: { conversationId: string;
       composerRef.current?.focus();
     },
   });
+
+  // A message typed on the home screen is handed over once, then cleared.
+  useEffect(() => {
+    const raw = sessionStorage.getItem("emotionala-pending-message");
+    if (!raw) return;
+    try {
+      const pending = JSON.parse(raw) as { id: string; content: string };
+      if (pending.id === conversationId && pending.content) {
+        sessionStorage.removeItem("emotionala-pending-message");
+        send.mutate(pending.content);
+      }
+    } catch {
+      sessionStorage.removeItem("emotionala-pending-message");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversationId]);
 
   function submit() {
     const content = draft.trim();
@@ -232,25 +248,7 @@ export function ChatWindow({ conversationId, userId }: { conversationId: string;
           rows={2}
           className="min-h-[3rem] resize-none border-0 bg-transparent p-1 text-sm shadow-none focus-visible:ring-0"
         />
-        <div className="mt-1 flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              disabled
-              title="Attachments are not available yet"
-              className="grid size-8 place-items-center rounded-lg text-muted-foreground/60"
-            >
-              <Paperclip className="size-4" strokeWidth={1.6} />
-            </button>
-            <button
-              type="button"
-              disabled
-              title="Voice input is not available yet"
-              className="grid size-8 place-items-center rounded-lg text-muted-foreground/60"
-            >
-              <Mic className="size-4" strokeWidth={1.6} />
-            </button>
-          </div>
+        <div className="mt-1 flex items-center justify-end">
           <Button
             size="sm"
             onClick={submit}

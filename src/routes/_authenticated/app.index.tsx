@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/app/")({
   component: Home,
 });
 
-export const PENDING_MESSAGE_KEY = "emotionala-pending-message";
+const PENDING_MESSAGE_KEY = "emotionala-pending-message";
 
 function Home() {
   const { firstName } = useDisplayName();
