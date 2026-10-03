@@ -155,7 +155,7 @@ export const Route = createFileRoute("/api/chat")({
         }
 
         const systemPrompt = buildSystemPrompt({
-          displayName: profile?.display_name ?? null,
+          displayName: profile?.display_name?.trim().split(/\s+/)[0] ?? null,
           communicationStyle,
           memories: memories ?? [],
           emotion,
